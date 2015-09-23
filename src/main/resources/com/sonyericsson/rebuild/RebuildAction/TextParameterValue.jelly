@@ -53,14 +53,13 @@ THE SOFTWARE.
         <div name="parameter" description="${it.description}">
            <input type="hidden" name="name" value="${it.name}" />
            <select name="value">
-                <!-- TODO what is pd.project supposed to be? -->
                 <j:forEach var="valp" items="${parameterVal.getValue().trim().split(newline)}">
 	                <j:if test="${!empty(valp)}">
 			            <f:option value="${valp}" selected="${valp == it.value}">
 			            	${valp}
-			             </f:option>
-		            </j:if>
-	            </j:forEach>
+			            </f:option>
+		        </j:if>
+	        </j:forEach>
             </select>
         </div>
     </f:entry>
