@@ -27,12 +27,44 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+	
+	<j:invoke var="buildClass" on="${currentThread.contextClassLoader}" method="loadClass">
+        <j:arg value="hudson.model.Run"/>
+    </j:invoke>
+    
+    <j:invoke var="paramDefPro" on="${currentThread.contextClassLoader}" method="loadClass">
+        <j:arg value="hudson.model.ParametersDefinitionProperty" />
+    </j:invoke>
+    
+    <j:invoke var="parmactionClass" on="${currentThread.contextClassLoader}" method="loadClass">
+                <j:arg value="hudson.model.ParametersAction" />
+    </j:invoke>
+    
+    <j:set var="build" value="${request.findAncestorObject(buildClass)}" />
+    <j:set var="pdp" value="${build.parent.getProperty(paramDefPro)}" />
+
+    <j:set var="pname" value="${it.name}" />
+    <j:set var="newline" value="\n" />
+    <j:set var="pd" value="${pdp.getParameterDefinition(pname)}" />
+    <j:set var="paramActionVal" value="${build.getAction(parmactionClass)}" />
+   	<j:set var="parameterVal" value="${paramActionVal.getParameter(pd.name)}" />
+  	  	       
     <f:entry title="${it.name}" description="${it.description}">
         <div name="parameter" description="${it.description}">
-            <input type="hidden" name="name" value="${it.name}" />
-            <f:textarea name="value" value="${it.value}" />
+           <input type="hidden" name="name" value="${it.name}" />
+           <select name="value">
+                <!-- TODO what is pd.project supposed to be? -->
+                <j:forEach var="valp" items="${parameterVal.getValue().trim().split(newline)}">
+	                <j:if test="${!empty(valp)}">
+			            <f:option value="${valp}" selected="${valp == it.value}">
+			            	${valp}
+			             </f:option>
+		            </j:if>
+	            </j:forEach>
+            </select>
         </div>
     </f:entry>
 </j:jelly>
+
 
 
